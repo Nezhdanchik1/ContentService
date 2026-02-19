@@ -1,6 +1,7 @@
 package org.example.contentservice.controller;
 
-import org.example.contentservice.dto.ArticleDTO;
+import org.example.contentservice.dto.request.CreateArticleRequest;
+import org.example.contentservice.dto.response.ArticleResponse;
 import org.example.contentservice.mapper.ArticleMapper;
 import org.example.contentservice.model.Article;
 import org.example.contentservice.model.AIStatus;
@@ -21,33 +22,33 @@ public class ArticleController {
     private final ArticleMapper articleMapper;
 
     @PostMapping
-    public ResponseEntity<ArticleDTO> createArticle(@RequestBody ArticleDTO dto) {
+    public ResponseEntity<ArticleResponse> createArticle(@RequestBody CreateArticleRequest dto) {
         Article entity = articleMapper.toEntity(dto);
         Article saved = articleService.createArticle(entity);
-        return ResponseEntity.ok(articleMapper.toDTO(saved));
+        return ResponseEntity.ok(articleMapper.toResponse(saved));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleDTO> getArticle(@PathVariable Long id) {
+    public ResponseEntity<ArticleResponse> getArticle(@PathVariable Long id) {
         Article article = articleService.getById(id);
-        return ResponseEntity.ok(articleMapper.toDTO(article));
+        return ResponseEntity.ok(articleMapper.toResponse(article));
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<ArticleDTO>> getArticlesByRoom(@PathVariable Long roomId) {
-        List<ArticleDTO> dtos = articleService.getByRoom(roomId)
+    public ResponseEntity<List<ArticleResponse>> getArticlesByRoom(@PathVariable Long roomId) {
+        List<ArticleResponse> dtos = articleService.getByRoom(roomId)
                 .stream()
-                .map(articleMapper::toDTO)
+                .map(articleMapper::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleDTO> updateArticle(@PathVariable Long id,
-                                                    @RequestBody ArticleDTO dto) {
+    public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id,
+                                                         @RequestBody CreateArticleRequest dto) {
         Article updatedEntity = articleMapper.toEntity(dto);
         Article updated = articleService.updateArticle(id, updatedEntity);
-        return ResponseEntity.ok(articleMapper.toDTO(updated));
+        return ResponseEntity.ok(articleMapper.toResponse(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -57,10 +58,10 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}/ai-review")
-    public ResponseEntity<ArticleDTO> updateAIReview(@PathVariable Long id,
-                                                     @RequestParam AIStatus status,
-                                                     @RequestParam(required = false) Double score) {
+    public ResponseEntity<ArticleResponse> updateAIReview(@PathVariable Long id,
+                                                          @RequestParam AIStatus status,
+                                                          @RequestParam(required = false) Double score) {
         Article article = articleService.updateAIStatus(id, status, score);
-        return ResponseEntity.ok(articleMapper.toDTO(article));
+        return ResponseEntity.ok(articleMapper.toResponse(article));
     }
 }

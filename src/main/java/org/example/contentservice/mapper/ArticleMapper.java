@@ -1,15 +1,14 @@
 package org.example.contentservice.mapper;
 
-import org.example.contentservice.dto.ArticleDTO;
+import org.example.contentservice.dto.request.CreateArticleRequest;
+import org.example.contentservice.dto.response.ArticleResponse;
 import org.example.contentservice.model.Article;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {WikiMapper.class})
 public interface ArticleMapper {
-    ArticleMapper INSTANCE = Mappers.getMapper(ArticleMapper.class);
+    ArticleResponse toResponse(Article article);
 
-    ArticleDTO toDTO(Article article);
-
-    Article toEntity(ArticleDTO articleDTO);
+    Article toEntity(CreateArticleRequest createArticleRequest);
 }

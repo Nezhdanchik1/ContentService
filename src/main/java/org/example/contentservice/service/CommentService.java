@@ -13,4 +13,6 @@ public interface CommentService {
     Comment acceptAnswer(Long commentId);
 
     void deleteComment(Long id);
+
+    Comment getCommentsById(Long id);
 }

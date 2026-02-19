@@ -33,6 +33,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
+    public Comment getCommentsById(Long id) {
+        return commentRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Comment> getCommentsByPost(Long postId) {
         return commentRepository.findByPostId(postId);
     }

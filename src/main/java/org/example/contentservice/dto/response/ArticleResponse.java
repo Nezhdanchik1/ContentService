@@ -1,5 +1,6 @@
-package org.example.contentservice.dto;
+package org.example.contentservice.dto.response;
 
+import org.example.contentservice.dto.WikiEntryDTO;
 import org.example.contentservice.model.DifficultyLevel;
 import org.example.contentservice.model.AIStatus;
 import lombok.*;
@@ -11,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ArticleDTO {
+public class ArticleResponse {
 
     private Long id;
     private Long userId;
@@ -24,5 +25,5 @@ public class ArticleDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private List<WikiEntryDTO> wikiEntries; // вложенные Wiki
+    private List<WikiEntryDTO> wikiEntries;
 }

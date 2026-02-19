@@ -32,6 +32,12 @@ public class CommentController {
         return ResponseEntity.ok(commentMapper.toResponse(saved));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CommentResponse> getCommentById(@PathVariable Long id) {
+        Comment comment = commentService.getCommentsById(id);
+        return ResponseEntity.ok(commentMapper.toResponse(comment));
+    }
+
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentResponse>> getCommentsByPost(@PathVariable Long postId) {
         List<CommentResponse> dtos = commentService.getCommentsByPost(postId)
@@ -44,6 +50,7 @@ public class CommentController {
     @PutMapping("/{id}/accept")
     public ResponseEntity<CommentResponse> acceptAnswer(@PathVariable Long id) {
         Comment accepted = commentService.acceptAnswer(id);
+        System.out.println(accepted.isAccepted());
         return ResponseEntity.ok(commentMapper.toResponse(accepted));
     }
 
