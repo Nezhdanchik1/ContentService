@@ -1,6 +1,9 @@
 databaseChangeLog:
-  - changeSet:
-      id: 0
-      author: admin
-      changes:
-        -
+  - include:
+      file: db/changelog/001-create-posts-table.yaml
+  - include:
+      file: db/changelog/002-create-comments-table.yaml
+  - include:
+      file: db/changelog/003-create-articles-table.yaml
+  - include:
+      file: db/changelog/004-create-wiki-table.yaml
