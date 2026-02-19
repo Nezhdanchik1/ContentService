@@ -30,7 +30,7 @@ public class Comment {
     private String content;
 
     @Column(name = "is_accepted", nullable = false)
-    private Boolean isAccepted = false;
+    private boolean isAccepted = false;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

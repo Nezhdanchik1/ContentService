@@ -1,8 +1,10 @@
 package org.example.contentservice.controller;
 
-import org.example.contentservice.dto.CommentDTO;
+import org.example.contentservice.dto.response.CommentResponse;
+import org.example.contentservice.dto.request.CreateCommentRequest;
 import org.example.contentservice.mapper.CommentMapper;
 import org.example.contentservice.model.Comment;
+import org.example.contentservice.repository.PostRepository;
 import org.example.contentservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,27 +20,31 @@ public class CommentController {
 
     private final CommentService commentService;
     private final CommentMapper commentMapper;
+    private final PostRepository postRepository;
 
     @PostMapping
-    public ResponseEntity<CommentDTO> addComment(@RequestBody CommentDTO dto) {
-        Comment comment = commentMapper.toEntity(dto);
+    public ResponseEntity<CommentResponse> addComment(@RequestBody CreateCommentRequest commentRequest) {
+        Comment comment = commentMapper.toEntity(commentRequest);
+        comment.setPost(postRepository.findById(commentRequest.getPostId())
+                .orElseThrow(() -> new RuntimeException("Post not found")));
+
         Comment saved = commentService.addComment(comment);
-        return ResponseEntity.ok(commentMapper.toDTO(saved));
+        return ResponseEntity.ok(commentMapper.toResponse(saved));
     }
 
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<CommentDTO>> getCommentsByPost(@PathVariable Long postId) {
-        List<CommentDTO> dtos = commentService.getCommentsByPost(postId)
+    public ResponseEntity<List<CommentResponse>> getCommentsByPost(@PathVariable Long postId) {
+        List<CommentResponse> dtos = commentService.getCommentsByPost(postId)
                 .stream()
-                .map(commentMapper::toDTO)
+                .map(commentMapper::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @PutMapping("/{id}/accept")
-    public ResponseEntity<CommentDTO> acceptAnswer(@PathVariable Long id) {
+    public ResponseEntity<CommentResponse> acceptAnswer(@PathVariable Long id) {
         Comment accepted = commentService.acceptAnswer(id);
-        return ResponseEntity.ok(commentMapper.toDTO(accepted));
+        return ResponseEntity.ok(commentMapper.toResponse(accepted));
     }
 
     @DeleteMapping("/{id}")

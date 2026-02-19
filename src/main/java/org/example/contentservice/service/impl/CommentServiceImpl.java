@@ -48,10 +48,10 @@ public class CommentServiceImpl implements CommentService {
                 .findByPostIdAndIsAcceptedTrue(comment.getPost().getId());
 
         if (previous != null) {
-            previous.setIsAccepted(false);
+            previous.setAccepted(false);
         }
 
-        comment.setIsAccepted(true);
+        comment.setAccepted(true);
 
         return comment;
     }

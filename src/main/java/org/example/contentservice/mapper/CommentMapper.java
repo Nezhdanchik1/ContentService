@@ -1,15 +1,18 @@
 package org.example.contentservice.mapper;
 
-import org.example.contentservice.dto.CommentDTO;
+import org.example.contentservice.dto.response.CommentResponse;
+import org.example.contentservice.dto.request.CreateCommentRequest;
 import org.example.contentservice.model.Comment;
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
-    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
-    CommentDTO toDTO(Comment comment);
+    @Mapping(source = "post.id", target = "postId")
+    CommentResponse toResponse(Comment comment);
 
-    Comment toEntity(CommentDTO commentDTO);
+    @Mapping(source = "postId", target = "post.id")
+    Comment toEntity(CreateCommentRequest commentRequest);
+
 }
