@@ -1,4 +1,4 @@
-package org.example.contentservice.dto;
+package org.example.contentservice.dto.response;
 
 import org.example.contentservice.model.PostType;
 import org.example.contentservice.model.AIStatus;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PostDTO {
+public class PostResponse {
 
     private Long id;
     private Long userId;
@@ -23,5 +23,4 @@ public class PostDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private List<CommentDTO> comments; // вложенные DTO комментариев
 }

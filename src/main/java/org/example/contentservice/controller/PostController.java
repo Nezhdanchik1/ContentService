@@ -1,6 +1,8 @@
 package org.example.contentservice.controller;
 
-import org.example.contentservice.dto.PostDTO;
+import org.example.contentservice.dto.request.CreatePostRequest;
+import org.example.contentservice.dto.response.OnePostResponse;
+import org.example.contentservice.dto.response.PostResponse;
 import org.example.contentservice.mapper.PostMapper;
 import org.example.contentservice.model.Post;
 import org.example.contentservice.service.PostService;
@@ -20,42 +22,42 @@ public class PostController {
     private final PostMapper postMapper;
 
     @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO dto) {
-        Post post = postMapper.toEntity(dto);
+    public ResponseEntity<PostResponse> createPost(@RequestBody CreatePostRequest postRequest) {
+        Post post = postMapper.toEntity(postRequest);
         Post saved = postService.createPost(post);
-        return ResponseEntity.ok(postMapper.toDTO(saved));
+        return ResponseEntity.ok(postMapper.toResponse(saved));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDTO> getPost(@PathVariable Long id) {
+    public ResponseEntity<OnePostResponse> getPost(@PathVariable Long id) {
         Post post = postService.getPostById(id);
-        return ResponseEntity.ok(postMapper.toDTO(post));
+        return ResponseEntity.ok(postMapper.toOnePostResponse(post));
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity<List<PostDTO>> getPostsByRoom(@PathVariable Long roomId) {
-        List<PostDTO> dtos = postService.getPostsByRoom(roomId)
+    public ResponseEntity<List<PostResponse>> getPostsByRoom(@PathVariable Long roomId) {
+        List<PostResponse> dtos = postService.getPostsByRoom(roomId)
                 .stream()
-                .map(postMapper::toDTO)
+                .map(postMapper::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PostDTO>> getPostsByUser(@PathVariable Long userId) {
-        List<PostDTO> dtos = postService.getPostsByUser(userId)
+    public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable Long userId) {
+        List<PostResponse> dtos = postService.getPostsByUser(userId)
                 .stream()
-                .map(postMapper::toDTO)
+                .map(postMapper::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDTO> updatePost(@PathVariable Long id,
-                                              @RequestBody PostDTO dto) {
-        Post updatedEntity = postMapper.toEntity(dto);
+    public ResponseEntity<PostResponse> updatePost(@PathVariable Long id,
+                                                   @RequestBody CreatePostRequest postRequest) {
+        Post updatedEntity = postMapper.toEntity(postRequest);
         Post updated = postService.updatePost(id, updatedEntity);
-        return ResponseEntity.ok(postMapper.toDTO(updated));
+        return ResponseEntity.ok(postMapper.toResponse(updated));
     }
 
     @DeleteMapping("/{id}")
