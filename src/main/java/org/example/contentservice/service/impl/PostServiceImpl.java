@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +42,25 @@ public class PostServiceImpl implements PostService {
     @Transactional(readOnly = true)
     public List<Post> getPostsByUser(Long userId) {
         return postRepository.findByUserId(userId);
+    }
+
+    public Map<Long, Long> getPostsCountByRoomIds(List<Long> roomIds) {
+
+        List<Object[]> results = postRepository.countPostsByRoomIds(roomIds);
+
+        Map<Long, Long> map = new HashMap<>();
+
+        for (Object[] row : results) {
+            Long roomId = (Long) row[0];
+            Long count = (Long) row[1];
+            map.put(roomId, count);
+        }
+
+        for (Long roomId : roomIds) {
+            map.putIfAbsent(roomId, 0L);
+        }
+
+        return map;
     }
 
     @Override

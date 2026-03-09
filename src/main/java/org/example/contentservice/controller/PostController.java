@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +42,14 @@ public class PostController {
                 .map(postMapper::toResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @PostMapping("/rooms/count")
+    public ResponseEntity<Map<Long, Long>> getPostsCount(@RequestBody List<Long> roomIds) {
+
+        Map<Long, Long> result = postService.getPostsCountByRoomIds(roomIds);
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/user/{userId}")
