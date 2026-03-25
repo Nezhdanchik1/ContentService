@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.contentservice.model.PostType;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +19,5 @@ public class CreatePostRequest {
     private String title;
     private String content;
     private PostType postType;
+    private Set<String> tags;
 }

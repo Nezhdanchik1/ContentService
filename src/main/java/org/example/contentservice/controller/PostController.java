@@ -25,7 +25,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<PostResponse> createPost(@RequestBody CreatePostRequest postRequest) {
         Post post = postMapper.toEntity(postRequest);
-        Post saved = postService.createPost(post);
+        Post saved = postService.createPost(post, postRequest.getTags());
         return ResponseEntity.ok(postMapper.toResponse(saved));
     }
 
@@ -65,7 +65,7 @@ public class PostController {
     public ResponseEntity<PostResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody CreatePostRequest postRequest) {
         Post updatedEntity = postMapper.toEntity(postRequest);
-        Post updated = postService.updatePost(id, updatedEntity);
+        Post updated = postService.updatePost(id, updatedEntity, postRequest.getTags());
         return ResponseEntity.ok(postMapper.toResponse(updated));
     }
 

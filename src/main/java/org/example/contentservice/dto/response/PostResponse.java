@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -22,5 +23,6 @@ public class PostResponse {
     private AIStatus aiStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Set<String> tags;
 
 }

@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/003-create-articles-table.yaml
   - include:
       file: db/changelog/004-create-wiki-table.yaml
+  - include:
+      file: db/changelog/005-create-tag-system.yaml

@@ -4,10 +4,11 @@ import org.example.contentservice.model.Post;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface PostService {
 
-    Post createPost(Post post);
+    Post createPost(Post post, Set<String> tagNames);
 
     Post getPostById(Long id);
 
@@ -17,7 +18,7 @@ public interface PostService {
 
     Map<Long, Long> getPostsCountByRoomIds(List<Long> roomIds);
 
-    Post updatePost(Long id, Post updatedPost);
+    Post updatePost(Long id, Post updatedPost, Set<String> tagNames);
 
     void deletePost(Long id);
 }

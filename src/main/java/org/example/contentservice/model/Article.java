@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "articles")
@@ -45,6 +46,14 @@ public class Article {
 
     @OneToMany(mappedBy = "sourceArticle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WikiEntry> wikiEntries;
+
+    @ManyToMany
+    @JoinTable(
+            name = "article_tags",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

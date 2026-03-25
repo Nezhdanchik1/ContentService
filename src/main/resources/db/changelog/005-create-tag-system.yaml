@@ -1,0 +1,93 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-tag-system
+      author: content-service
+      changes:
+        - createTable:
+            tableName: tags
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        - createTable:
+            tableName: post_tags
+            columns:
+              - column:
+                  name: post_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tag_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: article_tags
+            columns:
+              - column:
+                  name: article_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tag_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: post_tags
+            baseColumnNames: post_id
+            referencedTableName: posts
+            referencedColumnNames: id
+            constraintName: fk_post_tags_post
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: post_tags
+            baseColumnNames: tag_id
+            referencedTableName: tags
+            referencedColumnNames: id
+            constraintName: fk_post_tags_tag
+
+        - addForeignKeyConstraint:
+            baseTableName: article_tags
+            baseColumnNames: article_id
+            referencedTableName: articles
+            referencedColumnNames: id
+            constraintName: fk_article_tags_article
+            onDelete: CASCADE
+
+        - addForeignKeyConstraint:
+            baseTableName: article_tags
+            baseColumnNames: tag_id
+            referencedTableName: tags
+            referencedColumnNames: id
+            constraintName: fk_article_tags_tag
+
+        - createIndex:
+            tableName: post_tags
+            indexName: idx_post_tags_post
+            columns:
+              - column:
+                  name: post_id
+
+        - createIndex:
+            tableName: article_tags
+            indexName: idx_article_tags_article
+            columns:
+              - column:
+                  name: article_id

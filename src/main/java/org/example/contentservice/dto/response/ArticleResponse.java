@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -26,4 +27,5 @@ public class ArticleResponse {
     private LocalDateTime updatedAt;
 
     private List<WikiEntryDTO> wikiEntries;
+    private Set<String> tags;
 }

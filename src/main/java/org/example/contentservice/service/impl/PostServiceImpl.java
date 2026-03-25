@@ -4,6 +4,7 @@ import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.model.Post;
 import org.example.contentservice.repository.PostRepository;
 import org.example.contentservice.service.PostService;
+import org.example.contentservice.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -18,10 +20,12 @@ import java.util.Map;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final TagService tagService;
 
     @Override
-    public Post createPost(Post post) {
+    public Post createPost(Post post, Set<String> tagNames) {
         post.setAiStatus(AIStatus.PENDING);
+        post.setTags(tagService.findOrCreateTags(tagNames));
         return postRepository.save(post);
     }
 
@@ -64,12 +68,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post updatePost(Long id, Post updatedPost) {
+    public Post updatePost(Long id, Post updatedPost, Set<String> tagNames) {
         Post existing = getPostById(id);
 
         existing.setTitle(updatedPost.getTitle());
         existing.setContent(updatedPost.getContent());
         existing.setPostType(updatedPost.getPostType());
+        existing.setTags(tagService.findOrCreateTags(tagNames));
 
         return postRepository.save(existing);
     }

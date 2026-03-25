@@ -24,7 +24,7 @@ public class ArticleController {
     @PostMapping
     public ResponseEntity<ArticleResponse> createArticle(@RequestBody CreateArticleRequest dto) {
         Article entity = articleMapper.toEntity(dto);
-        Article saved = articleService.createArticle(entity);
+        Article saved = articleService.createArticle(entity, dto.getTags());
         return ResponseEntity.ok(articleMapper.toResponse(saved));
     }
 
@@ -47,7 +47,7 @@ public class ArticleController {
     public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id,
                                                          @RequestBody CreateArticleRequest dto) {
         Article updatedEntity = articleMapper.toEntity(dto);
-        Article updated = articleService.updateArticle(id, updatedEntity);
+        Article updated = articleService.updateArticle(id, updatedEntity, dto.getTags());
         return ResponseEntity.ok(articleMapper.toResponse(updated));
     }
 

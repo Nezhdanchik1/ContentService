@@ -9,6 +9,7 @@ import org.example.contentservice.model.PostType;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -27,4 +28,5 @@ public class OnePostResponse {
     private LocalDateTime updatedAt;
 
     private List<CommentResponse> comments; // вложенные DTO комментариев
+    private Set<String> tags;
 }
