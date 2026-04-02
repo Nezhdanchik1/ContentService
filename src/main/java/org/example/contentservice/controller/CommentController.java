@@ -8,6 +8,7 @@ import org.example.contentservice.repository.PostRepository;
 import org.example.contentservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class CommentController {
     private final PostRepository postRepository;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CommentResponse> addComment(@RequestBody CreateCommentRequest commentRequest) {
         Comment comment = commentMapper.toEntity(commentRequest);
         comment.setPost(postRepository.findById(commentRequest.getPostId())
@@ -48,6 +50,7 @@ public class CommentController {
     }
 
     @PutMapping("/{id}/accept")
+    @PreAuthorize("@securityService.isPostAuthorByCommentId(#id, principal)")
     public ResponseEntity<CommentResponse> acceptAnswer(@PathVariable Long id) {
         Comment accepted = commentService.acceptAnswer(id);
         System.out.println(accepted.isAccepted());
@@ -55,6 +58,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or @securityService.isCommentAuthor(#id, principal)")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         commentService.deleteComment(id);
         return ResponseEntity.noContent().build();

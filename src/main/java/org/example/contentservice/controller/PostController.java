@@ -8,6 +8,7 @@ import org.example.contentservice.model.Post;
 import org.example.contentservice.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class PostController {
     private final PostMapper postMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<PostResponse> createPost(@RequestBody CreatePostRequest postRequest) {
         Post post = postMapper.toEntity(postRequest);
         Post saved = postService.createPost(post, postRequest.getTags());
@@ -46,9 +48,7 @@ public class PostController {
 
     @PostMapping("/rooms/count")
     public ResponseEntity<Map<Long, Long>> getPostsCount(@RequestBody List<Long> roomIds) {
-
         Map<Long, Long> result = postService.getPostsCountByRoomIds(roomIds);
-
         return ResponseEntity.ok(result);
     }
 
@@ -62,6 +62,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or @securityService.isPostAuthor(#id, principal)")
     public ResponseEntity<PostResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody CreatePostRequest postRequest) {
         Post updatedEntity = postMapper.toEntity(postRequest);
@@ -70,6 +71,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or @securityService.isPostAuthor(#id, principal)")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();

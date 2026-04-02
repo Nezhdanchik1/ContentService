@@ -3,37 +3,32 @@ package org.example.contentservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "wiki_entries")
+@Table(name = "wiki_sections")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WikiEntry {
+public class WikiSection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ID из Room Service
     @Column(name = "room_id", nullable = false)
     private Long roomId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id")
-    private WikiSection section;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "source_article_id", nullable = false)
-    private Article sourceArticle;
-
     @Column(nullable = false)
-    private String title;
+    private String name;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "order_index")
+    private Integer orderIndex;
+
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
+    private List<WikiEntry> entries;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

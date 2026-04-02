@@ -9,5 +9,7 @@ public interface WikiEntryRepository extends JpaRepository<WikiEntry, Long> {
 
     List<WikiEntry> findByRoomId(Long roomId);
 
+    List<WikiEntry> findBySectionId(Long sectionId);
+
     List<WikiEntry> findBySourceArticle_Id(Long articleId);
 }

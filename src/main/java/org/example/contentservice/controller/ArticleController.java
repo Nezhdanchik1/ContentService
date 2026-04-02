@@ -8,6 +8,7 @@ import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ArticleController {
     private final ArticleMapper articleMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ArticleResponse> createArticle(@RequestBody CreateArticleRequest dto) {
         Article entity = articleMapper.toEntity(dto);
         Article saved = articleService.createArticle(entity, dto.getTags());
@@ -44,6 +46,7 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or @securityService.isArticleAuthor(#id, principal)")
     public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id,
                                                          @RequestBody CreateArticleRequest dto) {
         Article updatedEntity = articleMapper.toEntity(dto);
@@ -52,12 +55,14 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('MODERATOR') or @securityService.isArticleAuthor(#id, principal)")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
         articleService.deleteArticle(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/ai-review")
+    @PreAuthorize("hasRole('MODERATOR')")
     public ResponseEntity<ArticleResponse> updateAIReview(@PathVariable Long id,
                                                           @RequestParam AIStatus status,
                                                           @RequestParam(required = false) Double score) {

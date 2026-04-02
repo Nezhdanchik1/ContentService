@@ -12,6 +12,7 @@ public class WikiEntryDTO {
 
     private Long id;
     private Long roomId;
+    private Long sectionId;
     private Long sourceArticleId;
     private String title;
     private String content;
