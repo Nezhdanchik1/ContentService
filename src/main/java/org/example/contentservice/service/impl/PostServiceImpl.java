@@ -21,12 +21,23 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final TagService tagService;
+    private final org.example.contentservice.producer.ContentEventProducer contentEventProducer;
 
     @Override
     public Post createPost(Post post, Set<String> tagNames) {
         post.setAiStatus(AIStatus.PENDING);
         post.setTags(tagService.findOrCreateTags(tagNames));
-        return postRepository.save(post);
+        Post saved = postRepository.save(post);
+        
+        contentEventProducer.sendNewContentEvent(
+                saved.getId(),
+                saved.getTitle(),
+                saved.getUserId(),
+                saved.getRoomId(),
+                "POST"
+        );
+        
+        return saved;
     }
 
     @Override
