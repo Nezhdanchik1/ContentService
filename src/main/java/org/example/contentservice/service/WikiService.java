@@ -14,4 +14,10 @@ public interface WikiService {
     WikiSection createSection(Long roomId, String name);
 
     List<WikiSection> getSectionsByRoom(Long roomId);
+
+    org.example.contentservice.dto.response.WikiLandingResponse getLandingPage(List<Long> roomIds);
+
+    List<org.example.contentservice.dto.response.ArticlePreviewDto> searchArticles(String query, List<Long> roomIds);
+
+    void recordInteraction(Long articleId, Long userId, org.example.contentservice.model.InteractionType type);
 }

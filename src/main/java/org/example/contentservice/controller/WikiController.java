@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.example.contentservice.dto.response.ArticlePreviewDto;
+import org.example.contentservice.dto.response.WikiLandingResponse;
+import org.example.contentservice.model.InteractionType;
 @RestController
 @RequestMapping("/api/wiki")
 @RequiredArgsConstructor
@@ -56,5 +59,25 @@ public class WikiController {
                 .map(wikiMapper::toSectionDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/landing")
+    public ResponseEntity<WikiLandingResponse> getLandingPage(@RequestParam(required = false) List<Long> roomIds) {
+        return ResponseEntity.ok(wikiService.getLandingPage(roomIds));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticlePreviewDto>> searchArticles(
+            @RequestParam String q,
+            @RequestParam(required = false) List<Long> roomIds) {
+        return ResponseEntity.ok(wikiService.searchArticles(q, roomIds));
+    }
+
+    @PostMapping("/interactions/{articleId}/view")
+    public ResponseEntity<Void> recordView(
+            @PathVariable Long articleId,
+            @RequestParam(required = false) Long userId) {
+        wikiService.recordInteraction(articleId, userId, InteractionType.VIEW);
+        return ResponseEntity.ok().build();
     }
 }

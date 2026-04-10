@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/005-create-tag-system.yaml
   - include:
       file: db/changelog/006-add-wiki-sections.yaml
+  - include:
+      file: db/changelog/007-create-article-interactions-table.yaml
