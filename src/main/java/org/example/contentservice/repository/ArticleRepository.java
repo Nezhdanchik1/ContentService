@@ -31,14 +31,16 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "FROM Article a JOIN a.tags t WHERE a.roomId IN :roomIds GROUP BY t.name ORDER BY COUNT(a.id) DESC")
     List<org.example.contentservice.dto.response.CategoryStatDto> countArticlesByTagAndRoomIds(@org.springframework.data.repository.query.Param("roomIds") List<Long> roomIds, org.springframework.data.domain.Pageable pageable);
 
-    @org.springframework.data.jpa.repository.Query("SELECT a FROM Article a WHERE " +
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT a FROM Article a LEFT JOIN a.tags t WHERE " +
             "LOWER(a.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(a.content) LIKE LOWER(CONCAT('%', :query, '%'))")
+            "LOWER(a.content) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.name) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Article> searchByTitleOrContent(@org.springframework.data.repository.query.Param("query") String query);
 
-    @org.springframework.data.jpa.repository.Query("SELECT a FROM Article a WHERE " +
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT a FROM Article a LEFT JOIN a.tags t WHERE " +
             "a.roomId IN :roomIds AND (" +
             "LOWER(a.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(a.content) LIKE LOWER(CONCAT('%', :query, '%')))")
+            "LOWER(a.content) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+            "LOWER(t.name) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<Article> searchByTitleOrContentAndRoomIds(@org.springframework.data.repository.query.Param("query") String query, @org.springframework.data.repository.query.Param("roomIds") List<Long> roomIds);
 }
