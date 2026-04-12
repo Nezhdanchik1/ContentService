@@ -27,6 +27,9 @@ public class Article {
     @Column(name = "room_id", nullable = false)
     private Long roomId;
 
+    @Column(name = "direction_id")
+    private Long directionId;
+
     @Column(nullable = false)
     private String title;
 

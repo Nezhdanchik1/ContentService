@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 009-populate-direction-id
+      author: antigravity
+      changes:
+        - sqlFile:
+            path: ./009-populate-direction-id.sql
+            relativeToChangelogFile: true

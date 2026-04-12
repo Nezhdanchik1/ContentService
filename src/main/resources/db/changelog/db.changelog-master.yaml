@@ -13,3 +13,7 @@ databaseChangeLog:
       file: db/changelog/006-add-wiki-sections.yaml
   - include:
       file: db/changelog/007-create-article-interactions-table.yaml
+  - include:
+      file: db/changelog/008-add-direction-id-to-articles.yaml
+  - include:
+      file: db/changelog/009-populate-direction-id.yaml

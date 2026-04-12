@@ -37,6 +37,7 @@ public class WikiServiceImpl implements WikiService {
     private final WikiSectionRepository sectionRepository;
     private final ArticleRepository articleRepository;
     private final ArticleInteractionRepository interactionRepository;
+    private final org.example.contentservice.service.AchievementEventPublisher eventPublisher;
 
     @Override
     public WikiEntry createFromArticle(Long articleId, Long sectionId) {
@@ -158,14 +159,36 @@ public class WikiServiceImpl implements WikiService {
 
     @Override
     @Transactional
-    public void recordInteraction(Long articleId, Long userId, InteractionType type) {
+    public void recordInteraction(Long articleId, InteractionType type) {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            log.warn("Anonymous interaction {} for article {} ignored", type, articleId);
+            return;
+        }
+
+        Long userId;
+        try {
+            userId = Long.parseLong(auth.getPrincipal().toString());
+        } catch (NumberFormatException e) {
+            log.error("Invalid user ID in security context: {}", auth.getPrincipal());
+            return;
+        }
+
         ArticleInteraction interaction = ArticleInteraction.builder()
                 .articleId(articleId)
                 .userId(userId)
                 .interactionType(type)
                 .build();
         interactionRepository.save(interaction);
-        log.info("Recorded {} for article {}", type, articleId);
+        log.info("Recorded {} for article {} by user {}", type, articleId, userId);
+
+        // Achievement integration
+        if (type == InteractionType.VIEW) {
+            articleRepository.findById(articleId).ifPresent(article -> {
+                eventPublisher.publishEvent(userId, "ARTICLE_READ", articleId, article.getDirectionId());
+            });
+        }
     }
 
     private ArticlePreviewDto mapToPreview(Article article) {

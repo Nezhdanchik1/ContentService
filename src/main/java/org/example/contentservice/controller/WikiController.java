@@ -74,10 +74,9 @@ public class WikiController {
     }
 
     @PostMapping("/interactions/{articleId}/view")
-    public ResponseEntity<Void> recordView(
-            @PathVariable Long articleId,
-            @RequestParam(required = false) Long userId) {
-        wikiService.recordInteraction(articleId, userId, InteractionType.VIEW);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> recordView(@PathVariable Long articleId) {
+        wikiService.recordInteraction(articleId, InteractionType.VIEW);
         return ResponseEntity.ok().build();
     }
 }

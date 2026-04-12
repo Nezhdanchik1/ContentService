@@ -14,9 +14,15 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     public static final String EXCHANGE_CONTENT = "content-events-exchange";
+    public static final String EXCHANGE_STATISTICS = "statistics-exchange";
     public static final String QUEUE_JOIN = "room-join-queue";
     public static final String QUEUE_LEAVE = "room-leave-queue";
     public static final String ROUTING_KEY_CONTENT = "content.created";
+
+    @Bean
+    public TopicExchange statisticsExchange() {
+        return new TopicExchange(EXCHANGE_STATISTICS);
+    }
 
     @Bean
     public Queue joinQueue() {

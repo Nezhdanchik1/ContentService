@@ -19,5 +19,5 @@ public interface WikiService {
 
     List<org.example.contentservice.dto.response.ArticlePreviewDto> searchArticles(String query, List<Long> roomIds);
 
-    void recordInteraction(Long articleId, Long userId, org.example.contentservice.model.InteractionType type);
+    void recordInteraction(Long articleId, org.example.contentservice.model.InteractionType type);
 }

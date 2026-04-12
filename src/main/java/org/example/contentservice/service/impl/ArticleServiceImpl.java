@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.model.Article;
 import org.example.contentservice.repository.ArticleRepository;
+import org.example.contentservice.service.AchievementEventPublisher;
 import org.example.contentservice.service.ArticleService;
 import org.example.contentservice.service.TagService;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,24 @@ public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
     private final TagService tagService;
+    private final AchievementEventPublisher eventPublisher;
 
     @Override
     public Article createArticle(Article article, Set<String> tagNames) {
         article.setAiReviewStatus(AIStatus.PENDING);
         article.setTags(tagService.findOrCreateTags(tagNames));
-        return articleRepository.save(article);
+        
+        Article saved = articleRepository.save(article);
+        
+        // Отправка события в AchievementService
+        eventPublisher.publishEvent(
+                saved.getUserId(),
+                "ARTICLE_PUBLISHED",
+                saved.getId(),
+                saved.getDirectionId()
+        );
+        
+        return saved;
     }
 
     @Override

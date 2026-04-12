@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-add-direction-id-to-articles
+      author: antigravity
+      changes:
+        - addColumn:
+            tableName: articles
+            columns:
+              - column:
+                  name: direction_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true # Соглашаемся на nullable для существующих данных, проставим позже
