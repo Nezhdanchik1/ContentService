@@ -62,7 +62,7 @@ public class PostController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or @securityService.isPostAuthor(#id, principal)")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN') or @securityService.isPostAuthor(#id, principal)")
     public ResponseEntity<PostResponse> updatePost(@PathVariable Long id,
                                                    @RequestBody CreatePostRequest postRequest) {
         Post updatedEntity = postMapper.toEntity(postRequest);
@@ -71,7 +71,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or @securityService.isPostAuthor(#id, principal)")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN') or @securityService.isPostAuthor(#id, principal)")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();

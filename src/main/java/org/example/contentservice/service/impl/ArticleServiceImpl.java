@@ -67,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public void deleteArticle(Long id) {
-        articleRepository.delete(getById(id));
+        articleRepository.findById(id).ifPresent(articleRepository::delete);
     }
 
     @Override

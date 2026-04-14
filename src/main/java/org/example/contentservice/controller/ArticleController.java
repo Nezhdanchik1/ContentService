@@ -46,7 +46,7 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or @securityService.isArticleAuthor(#id, principal)")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN') or @securityService.isArticleAuthor(#id, principal)")
     public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id,
                                                          @RequestBody CreateArticleRequest dto) {
         Article updatedEntity = articleMapper.toEntity(dto);
@@ -55,14 +55,14 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('MODERATOR') or @securityService.isArticleAuthor(#id, principal)")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN') or @securityService.isArticleAuthor(#id, principal)")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
         articleService.deleteArticle(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/ai-review")
-    @PreAuthorize("hasRole('MODERATOR')")
+    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
     public ResponseEntity<ArticleResponse> updateAIReview(@PathVariable Long id,
                                                           @RequestParam AIStatus status,
                                                           @RequestParam(required = false) Double score) {
