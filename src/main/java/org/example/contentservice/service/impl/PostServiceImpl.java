@@ -3,6 +3,7 @@ package org.example.contentservice.service.impl;
 import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.model.Post;
 import org.example.contentservice.repository.PostRepository;
+import org.example.contentservice.service.AchievementEventPublisher;
 import org.example.contentservice.service.PostService;
 import org.example.contentservice.service.TagService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagService tagService;
     private final org.example.contentservice.producer.ContentEventProducer contentEventProducer;
+    private final AchievementEventPublisher eventPublisher;
 
     @Override
     public Post createPost(Post post, Set<String> tagNames) {
@@ -35,6 +37,14 @@ public class PostServiceImpl implements PostService {
                 saved.getUserId(),
                 saved.getRoomId(),
                 "POST"
+        );
+
+        // Отправка события в AchievementService (засчитываем как SOCIAL активность)
+        eventPublisher.publishEvent(
+                saved.getUserId(),
+                "COMMENT_ADDED",
+                saved.getId(),
+                null // У обсуждений может не быть конкретного directionId
         );
         
         return saved;

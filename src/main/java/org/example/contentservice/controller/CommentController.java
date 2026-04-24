@@ -49,6 +49,15 @@ public class CommentController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<CommentResponse>> getCommentsByUser(@PathVariable Long userId) {
+        List<CommentResponse> dtos = commentService.getCommentsByUser(userId)
+                .stream()
+                .map(commentMapper::toResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @PutMapping("/{id}/accept")
     @PreAuthorize("@securityService.isPostAuthorByCommentId(#id, principal)")
     public ResponseEntity<CommentResponse> acceptAnswer(@PathVariable Long id) {

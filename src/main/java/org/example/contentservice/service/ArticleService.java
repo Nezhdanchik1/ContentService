@@ -14,6 +14,8 @@ public interface ArticleService {
 
     List<Article> getByRoom(Long roomId);
 
+    List<Article> getByUser(Long userId);
+
     Article updateArticle(Long id, Article updated, Set<String> tagNames);
 
     void deleteArticle(Long id);

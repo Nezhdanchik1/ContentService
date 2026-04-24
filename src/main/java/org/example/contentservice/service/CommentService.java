@@ -9,7 +9,7 @@ public interface CommentService {
     Comment addComment(Comment comment);
 
     List<Comment> getCommentsByPost(Long postId);
-
+    List<Comment> getCommentsByUser(Long userId);
     Comment acceptAnswer(Long commentId);
 
     void deleteComment(Long id);

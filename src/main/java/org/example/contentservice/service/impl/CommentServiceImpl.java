@@ -56,6 +56,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Comment> getCommentsByUser(Long userId) {
+        return commentRepository.findByUserId(userId);
+    }
+
+    @Override
     public Comment acceptAnswer(Long commentId) {
 
         Comment comment = commentRepository.findById(commentId)

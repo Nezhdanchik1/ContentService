@@ -45,6 +45,15 @@ public class ArticleController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ArticleResponse>> getArticlesByUser(@PathVariable Long userId) {
+        List<ArticleResponse> dtos = articleService.getByUser(userId)
+                .stream()
+                .map(articleMapper::toResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN') or @securityService.isArticleAuthor(#id, principal)")
     public ResponseEntity<ArticleResponse> updateArticle(@PathVariable Long id,

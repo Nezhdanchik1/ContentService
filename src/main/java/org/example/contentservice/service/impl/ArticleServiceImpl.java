@@ -54,6 +54,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Article> getByUser(Long userId) {
+        return articleRepository.findByUserId(userId);
+    }
+
+    @Override
     public Article updateArticle(Long id, Article updated, Set<String> tagNames) {
         Article existing = getById(id);
 
