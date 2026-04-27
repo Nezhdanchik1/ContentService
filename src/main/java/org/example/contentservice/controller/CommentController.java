@@ -22,13 +22,26 @@ public class CommentController {
     private final CommentService commentService;
     private final CommentMapper commentMapper;
     private final PostRepository postRepository;
+    private final org.example.contentservice.repository.ArticleRepository articleRepository;
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CommentResponse> addComment(@RequestBody CreateCommentRequest commentRequest) {
         Comment comment = commentMapper.toEntity(commentRequest);
-        comment.setPost(postRepository.findById(commentRequest.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found")));
+        
+        // Пытаемся найти либо пост, либо статью
+        var post = postRepository.findById(commentRequest.getPostId());
+        if (post.isPresent()) {
+            comment.setPost(post.get());
+        } else {
+            // Если поста нет, проверяем статью
+            var article = articleRepository.findById(commentRequest.getPostId());
+            if (article.isPresent()) {
+                comment.setArticle(article.get());
+            } else {
+                throw new RuntimeException("Target content not found with ID: " + commentRequest.getPostId());
+            }
+        }
 
         Comment saved = commentService.addComment(comment);
         return ResponseEntity.ok(commentMapper.toResponse(saved));
@@ -42,10 +55,20 @@ public class CommentController {
 
     @GetMapping("/post/{postId}")
     public ResponseEntity<List<CommentResponse>> getCommentsByPost(@PathVariable Long postId) {
+        // Здесь postId может быть как от Post, так и от Article
         List<CommentResponse> dtos = commentService.getCommentsByPost(postId)
                 .stream()
                 .map(commentMapper::toResponse)
                 .collect(Collectors.toList());
+        
+        // Если ничего не нашли через Post, пробуем через Article
+        if (dtos.isEmpty()) {
+            dtos = commentService.getCommentsByArticle(postId)
+                    .stream()
+                    .map(commentMapper::toResponse)
+                    .collect(Collectors.toList());
+        }
+        
         return ResponseEntity.ok(dtos);
     }
 

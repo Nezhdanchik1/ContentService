@@ -23,13 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment addComment(Comment comment) {
-
-        Long postId = comment.getPost().getId();
-
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
-        comment.setPost(post);
+        // Просто сохраняем, так как связи уже установлены в контроллере
         Comment saved = commentRepository.save(comment);
 
         // Отправка события в AchievementService
@@ -37,10 +31,16 @@ public class CommentServiceImpl implements CommentService {
                 saved.getUserId(),
                 "COMMENT_ADDED",
                 saved.getId(),
-                null // У постов пока нет directionId
+                null
         );
 
         return saved;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Comment> getCommentsByArticle(Long articleId) {
+        return commentRepository.findByArticleId(articleId);
     }
 
     @Override

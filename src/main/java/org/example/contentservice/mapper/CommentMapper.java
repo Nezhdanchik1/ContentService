@@ -9,11 +9,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
 
-    @Mapping(source = "post.id", target = "postId")
+    @Mapping(target = "postId", expression = "java(comment.getPost() != null ? comment.getPost().getId() : (comment.getArticle() != null ? comment.getArticle().getId() : null))")
     @Mapping(source = "accepted", target = "isAccepted")
     CommentResponse toResponse(Comment comment);
 
-    @Mapping(source = "postId", target = "post.id")
+    @Mapping(target = "post", ignore = true)
+    @Mapping(target = "article", ignore = true)
     Comment toEntity(CreateCommentRequest commentRequest);
 
 }

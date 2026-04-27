@@ -10,6 +10,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     // Все комментарии поста
     List<Comment> findByPostId(Long postId);
 
+    // Все комментарии статьи
+    List<Comment> findByArticleId(Long articleId);
+
     // Все комментарии пользователя
     List<Comment> findByUserId(Long userId);
 

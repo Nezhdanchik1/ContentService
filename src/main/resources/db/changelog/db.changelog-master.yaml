@@ -17,3 +17,5 @@ databaseChangeLog:
       file: db/changelog/008-add-direction-id-to-articles.yaml
   - include:
       file: db/changelog/009-populate-direction-id.yaml
+  - include:
+      file: db/changelog/010-add-article-id-to-comments.yaml

@@ -17,10 +17,14 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Внутренний FK
+    // Внутренний FK (Теперь nullable, так как может быть статья)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = true)
     private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id", nullable = true)
+    private Article article;
 
     // ID из User Service
     @Column(name = "user_id", nullable = false)

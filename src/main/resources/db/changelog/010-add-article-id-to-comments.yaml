@@ -1,0 +1,33 @@
+databaseChangeLog:
+  - changeSet:
+      id: 010-add-article-id-to-comments
+      author: content-service
+      changes:
+        - dropNotNullConstraint:
+            tableName: comments
+            columnName: post_id
+            columnDataType: BIGINT
+
+        - addColumn:
+            tableName: comments
+            columns:
+              - column:
+                  name: article_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+        - addForeignKeyConstraint:
+            baseTableName: comments
+            baseColumnNames: article_id
+            referencedTableName: articles
+            referencedColumnNames: id
+            constraintName: fk_comments_article
+            onDelete: CASCADE
+
+        - createIndex:
+            tableName: comments
+            indexName: idx_comments_article
+            columns:
+              - column:
+                  name: article_id
