@@ -23,7 +23,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment addComment(Comment comment) {
-        // Просто сохраняем, так как связи уже установлены в контроллере
+        if (comment.getPost() == null && comment.getArticle() == null) {
+            throw new IllegalArgumentException("Comment must be linked to a post or an article");
+        }
+        if (comment.getPost() != null && comment.getArticle() != null) {
+            throw new IllegalArgumentException("Comment cannot be linked to both post and article");
+        }
+
         Comment saved = commentRepository.save(comment);
 
         // Отправка события в AchievementService
@@ -67,17 +73,23 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        // снимаем предыдущий accepted если есть
-        Comment previous = commentRepository
-                .findByPostIdAndIsAcceptedTrue(comment.getPost().getId());
+        Comment previous = null;
+        if (comment.getPost() != null) {
+            previous = commentRepository.findByPostIdAndIsAcceptedTrue(comment.getPost().getId());
+        } else if (comment.getArticle() != null) {
+            previous = commentRepository.findByArticleIdAndIsAcceptedTrue(comment.getArticle().getId());
+        } else {
+            throw new IllegalStateException("Comment is not linked to post or article");
+        }
 
-        if (previous != null) {
+        if (previous != null && !previous.getId().equals(comment.getId())) {
             previous.setAccepted(false);
+            commentRepository.save(previous);
         }
 
         comment.setAccepted(true);
 
-        return comment;
+        return commentRepository.save(comment);
     }
 
     @Override

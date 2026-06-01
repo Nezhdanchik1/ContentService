@@ -30,7 +30,11 @@ public class ContentEventProducer {
                 .build();
 
         log.info("Sending new content event to RabbitMQ: {}", event);
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTENT, RabbitConfig.ROUTING_KEY_CONTENT, event);
+        try {
+            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_CONTENT, RabbitConfig.ROUTING_KEY_CONTENT, event);
+        } catch (Exception e) {
+            log.error("Failed to send content event to RabbitMQ", e);
+        }
     }
 
     public void sendUserActionEvent(Long userId, AchievementEventType type, Long targetId, Long directionId) {
@@ -44,6 +48,10 @@ public class ContentEventProducer {
 
         log.info("Sending User Action Event to Statistics: {}", event);
         String routingKey = "user.action." + type.name().toLowerCase().replace("_", ".");
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_STATISTICS, routingKey, event);
+        try {
+            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_STATISTICS, routingKey, event);
+        } catch (Exception e) {
+            log.error("Failed to send user action event to RabbitMQ", e);
+        }
     }
 }

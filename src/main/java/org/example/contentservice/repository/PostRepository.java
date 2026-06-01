@@ -3,18 +3,25 @@ package org.example.contentservice.repository;
 import org.example.contentservice.model.Post;
 import org.example.contentservice.model.PostType;
 import org.example.contentservice.model.AIStatus;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // Все посты комнаты
+    @EntityGraph(attributePaths = {"tags"})
     List<Post> findByRoomId(Long roomId);
 
-    // Посты пользователя
+    @EntityGraph(attributePaths = {"tags"})
     List<Post> findByUserId(Long userId);
+
+    @EntityGraph(attributePaths = {"tags", "comments"})
+    @Query("SELECT p FROM Post p WHERE p.id = :id")
+    Optional<Post> findDetailedById(@Param("id") Long id);
 
     @Query("""
         SELECT p.roomId, COUNT(p)

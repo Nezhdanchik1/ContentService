@@ -43,7 +43,15 @@ public class SecurityService {
     public boolean isPostAuthorByCommentId(Long commentId, String userId) {
         if (userId == null) return false;
         return commentRepository.findById(commentId)
-                .map(comment -> comment.getPost().getUserId().toString().equals(userId))
+                .map(comment -> {
+                    if (comment.getPost() != null) {
+                        return comment.getPost().getUserId().toString().equals(userId);
+                    }
+                    if (comment.getArticle() != null) {
+                        return comment.getArticle().getUserId().toString().equals(userId);
+                    }
+                    return false;
+                })
                 .orElse(false);
     }
 }

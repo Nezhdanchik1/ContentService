@@ -2,6 +2,7 @@ package org.example.contentservice.service.impl;
 
 import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.model.Post;
+import org.example.contentservice.model.PostType;
 import org.example.contentservice.repository.PostRepository;
 import org.example.contentservice.service.AchievementEventPublisher;
 import org.example.contentservice.service.PostService;
@@ -27,8 +28,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post createPost(Post post, Set<String> tagNames) {
+        if (post.getPostType() == null) {
+            post.setPostType(PostType.DISCUSSION);
+        }
         post.setAiStatus(AIStatus.PENDING);
-        post.setTags(tagService.findOrCreateTags(tagNames));
+        post.setTags(tagService.findOrCreateTags(tagNames != null ? tagNames : Set.of()));
         Post saved = postRepository.save(post);
         
         contentEventProducer.sendNewContentEvent(
@@ -53,7 +57,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public Post getPostById(Long id) {
-        return postRepository.findById(id)
+        return postRepository.findDetailedById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 

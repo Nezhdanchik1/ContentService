@@ -3,6 +3,7 @@ package org.example.contentservice.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.model.Article;
+import org.example.contentservice.model.DifficultyLevel;
 import org.example.contentservice.repository.ArticleRepository;
 import org.example.contentservice.service.AchievementEventPublisher;
 import org.example.contentservice.service.ArticleService;
@@ -24,8 +25,11 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article createArticle(Article article, Set<String> tagNames) {
+        if (article.getDifficultyLevel() == null) {
+            article.setDifficultyLevel(DifficultyLevel.BEGINNER);
+        }
         article.setAiReviewStatus(AIStatus.PENDING);
-        article.setTags(tagService.findOrCreateTags(tagNames));
+        article.setTags(tagService.findOrCreateTags(tagNames != null ? tagNames : Set.of()));
         
         Article saved = articleRepository.save(article);
         
@@ -43,7 +47,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(readOnly = true)
     public Article getById(Long id) {
-        return articleRepository.findById(id)
+        return articleRepository.findDetailedById(id)
                 .orElseThrow(() -> new RuntimeException("Article not found"));
     }
 

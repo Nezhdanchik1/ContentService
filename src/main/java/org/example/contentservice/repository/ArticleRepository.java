@@ -3,15 +3,25 @@ package org.example.contentservice.repository;
 import org.example.contentservice.model.DifficultyLevel;
 import org.example.contentservice.model.AIStatus;
 import org.example.contentservice.model.Article;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
+    @EntityGraph(attributePaths = {"tags", "wikiEntries"})
     List<Article> findByRoomId(Long roomId);
 
+    @EntityGraph(attributePaths = {"tags", "wikiEntries"})
     List<Article> findByUserId(Long userId);
+
+    @EntityGraph(attributePaths = {"tags", "wikiEntries"})
+    @Query("SELECT a FROM Article a WHERE a.id = :id")
+    Optional<Article> findDetailedById(@Param("id") Long id);
 
     List<Article> findByRoomIdAndDifficultyLevel(Long roomId, DifficultyLevel level);
 

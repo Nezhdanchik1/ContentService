@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface CommentMapper {
 
     @Mapping(target = "postId", expression = "java(comment.getPost() != null ? comment.getPost().getId() : (comment.getArticle() != null ? comment.getArticle().getId() : null))")
-    @Mapping(source = "accepted", target = "isAccepted")
+    @Mapping(target = "isAccepted", expression = "java(comment.isAccepted())")
     CommentResponse toResponse(Comment comment);
 
     @Mapping(target = "post", ignore = true)

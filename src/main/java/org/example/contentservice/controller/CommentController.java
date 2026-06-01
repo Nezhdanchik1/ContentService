@@ -7,9 +7,11 @@ import org.example.contentservice.model.Comment;
 import org.example.contentservice.repository.PostRepository;
 import org.example.contentservice.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +41,10 @@ public class CommentController {
             if (article.isPresent()) {
                 comment.setArticle(article.get());
             } else {
-                throw new RuntimeException("Target content not found with ID: " + commentRequest.getPostId());
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Target content not found with ID: " + commentRequest.getPostId()
+                );
             }
         }
 
@@ -85,7 +90,6 @@ public class CommentController {
     @PreAuthorize("@securityService.isPostAuthorByCommentId(#id, principal)")
     public ResponseEntity<CommentResponse> acceptAnswer(@PathVariable Long id) {
         Comment accepted = commentService.acceptAnswer(id);
-        System.out.println(accepted.isAccepted());
         return ResponseEntity.ok(commentMapper.toResponse(accepted));
     }
 
